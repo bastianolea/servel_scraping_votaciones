@@ -68,7 +68,8 @@ Sys.sleep(esperas)
 # lista_comunas <- c(3:length(comunas)) 
 
 # comunas de interés
-comunas_interes <- c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO ", "ÑUÑOA", "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "VIÑA DEL MAR")
+comunas_interes <- c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "MAIPU",
+                     "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "VIÑA DEL MAR")
 
 lista_comunas <- tibble(comunas) |> 
   mutate(id = row_number()) |> 

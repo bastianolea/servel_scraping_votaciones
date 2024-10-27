@@ -40,7 +40,9 @@ datos_grafico <- datos_todos |>
          candidato = ifelse(partido == "", candidato, 
                             glue("{candidato} ({partido})")),
          candidato = candidato |> str_wrap(22),
-         candidato = fct_reorder(candidato, porcentaje))
+         candidato = fct_reorder(candidato, porcentaje),
+         candidato = fct_relevel(candidato, "Nulo/Blanco",after = 0)) |> 
+  arrange(desc(candidato))
 
 n_candidatos = length(datos_grafico$candidato)
 n_mesas = datos_grafico$mesas_escrutadas[1]
@@ -61,6 +63,7 @@ opt_nudge = 0.006
 opts_corte = 0.045 * n_candidatos
 opts_size_texto = 4
 opt_ancho_col = .4
+opt_expand_x = 0.1
 
 
 ## base ----
@@ -79,7 +82,7 @@ grafico_1 <- datos_grafico |>
 
 ## escalas ---- 
 grafico_2 <- grafico_1 +
-  scale_x_continuous(labels = scales::percent, expand = expansion(c(0, 0.05))) +
+  scale_x_continuous(labels = scales::percent, expand = expansion(c(0, opt_expand_x))) +
   scale_fill_manual(values = c("Centro" = color$centro,
                                "Izquierda" = color$izquierda,
                                "Derecha" = color$derecha,
@@ -131,6 +134,6 @@ grafico_4 <- grafico_3 +
 grafico_4
 
 # guardar ----
-ggsave(filename = glue("graficos/resultados_parciales_{comuna_t}_{formatear_fecha(fecha_scraping)}.jpg"),
+ggsave(filename = glue("graficos/servel_grafico_{comuna_t}_{formatear_fecha(fecha_scraping)}.jpg"),
        width = 5, height = (1.4 + (n_candidatos * 0.3)), scale = 1.5
 )

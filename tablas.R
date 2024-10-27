@@ -45,17 +45,17 @@ tabla <- datos_tabla |>
   # formato de números
   fmt_percent(porcentaje, decimals = 1) |> 
   fmt_number(votos, 
-             decimals = 0, sep_mark = ".") |> 
+             decimals = 0, sep_mark = ".", dec_mark = ",") |> 
   # color texto partidos
   data_color(columns = sector, #rows = candidato != "Nulo/Blanco", 
              target_columns = partido,
-             method = "factor", levels = levels(datos$sector), # la paleta va en el orden que tiene el vector
+             method = "factor", levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
              palette = c(color$centro, color$derecha, color$independiente, color$izquierda, color_detalle3),
              apply_to = "text") |>
   # color fondo partidos
   data_color(columns = sector,  rows = candidato != "Nulo/Blanco", 
              target_columns = partido,
-             method = "factor", levels = levels(datos$sector), # la paleta va en el orden que tiene el vector
+             method = "factor", levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
              palette = c(color$centro, color$derecha, color$independiente, color$izquierda, color_detalle2),
              alpha = .2, apply_to = "fill", autocolor_text = FALSE) |> 
   cols_label(candidato = "Candidato/a",
@@ -98,4 +98,6 @@ tabla
 
 # guardar ----
 gtsave(tabla, 
-       filename = glue("tablas/resultados_parciales_{comuna_t}_{formatear_fecha(fecha_scraping)}.png"))
+       filename = glue("tablas/servel_tabla_{comuna_t}_{formatear_fecha(fecha_scraping)}.png"),
+       quiet = TRUE) |> 
+  suppressWarnings()
