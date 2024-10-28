@@ -3,6 +3,9 @@ library(fs)
 library(purrr)
 source("funciones.R")
 
+# eliminar anteriores
+file_delete(dir_ls("output"))
+
 
 # obtener datos ----
 # source("servel_scraping.R")
@@ -10,19 +13,19 @@ source("servel_limpiar.R")
 
 
 # elegir comuna ----
-# comuna_elegida = "LA FLORIDA"
-# comuna_elegida = "PUENTE ALTO"
-# comuna_elegida = "SANTIAGO"
-# comuna_elegida = "ÑUÑOA"
-# comuna_elegida = "PROVIDENCIA"
-# comuna_elegida = "LAS CONDES"
-# comuna_elegida = "LA PINTANA"
-# comuna_elegida = "VIÑA DEL MAR"
+# comunas_elegidas = "LA FLORIDA"
 
-# comuna_elegida <- sample(comunas, 1)
+# comunas_elegidas <- sample(comunas, 1)
 
-comunas_elegidas = c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", 
-                     "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "VIÑA DEL MAR")
+# comunas_elegidas = c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "SAN MIGUEL",
+#                      "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "VIÑA DEL MAR")
+# source("comunas.R")
+# comunas_elegidas <- comunas_interes
+# comunas_elegidas <- c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "MAIPU", 
+#                       "SAN MIGUEL", "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "VIÑA DEL MAR", 
+#                       "RECOLETA", "MACUL","LA CISTERNA",
+#                       "ESTACION CENTRAL", "PEÑALOLEN", "VALPARAISO", "RENCA")
+comunas_elegidas <- c("ÑUÑOA", "LAS CONDES")
 
 # generar salidas ----
 walk(comunas_elegidas, \(comuna_elegida) {
@@ -40,7 +43,4 @@ walk(comunas_elegidas, \(comuna_elegida) {
             "output", overwrite = TRUE)
 })
 
-
-# eliminar
-# file_delete(dir_ls("output"))
 beepr::beep()

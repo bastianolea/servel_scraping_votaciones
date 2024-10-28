@@ -6,6 +6,7 @@ library(tidyr)
 library(lubridate)
 library(stringr)
 library(tidyr)
+library(forcats)
 
 # cargar ----
 
@@ -26,9 +27,13 @@ tabla_2 <- tabla_1 |>
   janitor::clean_names() |> 
   group_by(comuna) |> 
   fill(candidatos, .direction = "down") |> 
+  mutate(votos = str_remove_all(votos, "\\.") |> as.numeric()) |> 
   mutate(total_votos = sum(votos)) |> 
   mutate(across(c(mesas_escrutadas, mesas_totales), as.numeric))
 
+# tabla_1 |> 
+#   list_rbind() |> 
+#   filter(comuna == "PROVIDENCIA")
 
 # repetidos ----
 # # marcar casos repetidos (misma cantidad de votos)
@@ -53,16 +58,20 @@ tabla_2 <- tabla_1 |>
 
 # marcar filas que no son candidatos ----
 tabla_5 <- tabla_2 |> 
-  mutate(tipo_totales = ifelse(lista_pacto %in% c("Válidamente Emitidos", "Votos Nulos", "Votos en Blanco", "Total Votación"), TRUE, FALSE)) |> 
-  mutate(tipo_pacto = ifelse(lista_pacto |> str_detect("^\\w+-\\w+"), TRUE, FALSE)) |> 
+  # filter(comuna == "PROVIDENCIA") |>
+  # select(mesas_texto)
+  mutate(tipo_totales = ifelse(lista_pacto %in% c("Válidamente Emitidos", "Votos Nulos", "Votos Blancos", "Votos en Blanco", "Total Votación"), TRUE, FALSE)) |> 
+  mutate(tipo_pacto = ifelse(lista_pacto |> str_detect("^\\w+ - \\w+"), TRUE, FALSE)) |> 
   # corregir cifras
   mutate(votos = votos |> str_remove("\\.") |> as.numeric(),
+         mesas_escrutadas = mesas_escrutadas |> str_remove_all("\\.") |> as.numeric(),
+         mesas_totales = mesas_texto |> str_extract("un total de (\\d+|\\d+\\.\\d+) mesas") |> str_remove("\\.") |> 
+           str_extract("\\d+") |> as.numeric(), #mesas_totales |> str_remove_all("\\.") |> as.numeric(),
          porcentaje = porcentaje |> str_remove("%$") |> as.numeric(),
          porcentaje = porcentaje / 100) |> 
   # recalcular total de votos
   group_by(comuna) |> 
-  mutate(total_votos = sum(votos)) |> 
-  print(n=Inf)
+  mutate(total_votos = sum(votos))
 
 
 # sacar pactos y totales ----
@@ -113,6 +122,7 @@ tabla_8 <- tabla_7 |>
 source("partidos.R")
 
 tabla_9 <- tabla_8 |> 
+  mutate(partido = ifelse(partido == "REPUBLICANO", "REP", partido)) |> 
   mutate(sector = case_when(partido %in% partidos_izquierda ~ "Izquierda",
                             partido %in% partidos_centro ~ "Centro",
                             partido %in% partidos_derecha ~ "Derecha",
@@ -128,7 +138,9 @@ tabla_9 <- tabla_8 |>
     candidato == "Daniel Reyes Morales" ~ "Derecha", # la florida
     candidato == "Sebastian Sichel Ramirez" ~ "Derecha",
     candidato == "Marcela Cubillos Sigall" ~ "Derecha",
-    .default = sector))
+    candidato == "James Daniel Argo Chavez" ~ "Derecha",
+    .default = sector)) |> 
+  mutate(sector = fct_relevel(sector, "Derecha", "Izquierda", "Independiente", "Centro", "Otros"))
 
 
 # corregir nombres ----

@@ -30,7 +30,7 @@ source("colores.R")
 # nombre correcto de la comuna
 comuna_t <- corregir_comunas(comuna_elegida)
 
-
+# comuna_elegida = "PUENTE ALTO"
 # filtrar comuna ----
 datos_grafico <- datos_todos |>
   filter(comuna == comuna_elegida) |>
@@ -47,7 +47,7 @@ datos_grafico <- datos_todos |>
 n_candidatos = length(datos_grafico$candidato)
 n_mesas = datos_grafico$mesas_escrutadas[1]
 total_mesas = datos_grafico$mesas_totales[1]
-p_mesas = datos_grafico$mesas_porcentaje[1] |> percent(accuracy = 1, trim = TRUE)
+p_mesas = datos_grafico$mesas_porcentaje[1] |> percent(accuracy = 0.01, trim = TRUE)
 
 # usar esto o alto variable de la imagen final
 # opt_ancho_col = case_when(n_candidatos >= 8 ~ .55,
@@ -127,7 +127,7 @@ grafico_4 <- grafico_3 +
        fill = "Sector político",
        y = "Candidaturas", #glue("Candidaturas en {comuna_t}"),
        x = glue("Porcentaje de votos ({p_mesas} de mesas escrutadas)"),
-       caption = glue("Fuente: Servel (provisorios.servel.cl), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}\nElaboración: Bastián Olea Herrera")) +
+       caption = glue("Fuente: Servel (elecciones.servel.cl), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}\nElaboración: Bastián Olea Herrera")) +
   theme(plot.title = element_markdown(),
         plot.subtitle = element_markdown())
 

@@ -20,6 +20,7 @@ source("colores.R")
 # comuna_elegida = sample(unique(datos_todos$comuna), 1)
 
 # nombre correcto de la comuna
+# comuna_elegida = "ÑUÑOA"
 comuna_t <- corregir_comunas(comuna_elegida)
 
 # filtrar comuna
@@ -34,7 +35,7 @@ datos_tabla <- datos_todos |>
 
 n_mesas = datos_grafico$mesas_escrutadas[1]
 total_mesas = datos_grafico$mesas_totales[1]
-p_mesas = datos_grafico$mesas_porcentaje[1] |> percent(accuracy = 1, trim = TRUE)
+p_mesas = datos_grafico$mesas_porcentaje[1] |> percent(accuracy = 0.01, trim = TRUE)
 
 tabla <- datos_tabla |> 
   arrange(desc(candidato)) |>
@@ -50,13 +51,13 @@ tabla <- datos_tabla |>
   data_color(columns = sector, #rows = candidato != "Nulo/Blanco", 
              target_columns = partido,
              method = "factor", levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
-             palette = c(color$centro, color$derecha, color$independiente, color$izquierda, color_detalle3),
+             palette = c(color$derecha, color$izquierda, color$independiente, color$centro, color_detalle3),
              apply_to = "text") |>
   # color fondo partidos
   data_color(columns = sector,  rows = candidato != "Nulo/Blanco", 
              target_columns = partido,
              method = "factor", levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
-             palette = c(color$centro, color$derecha, color$independiente, color$izquierda, color_detalle2),
+             palette = c(color$derecha, color$izquierda, color$independiente, color$centro, color_detalle3),
              alpha = .2, apply_to = "fill", autocolor_text = FALSE) |> 
   cols_label(candidato = "Candidato/a",
              partido = "Partido",
@@ -86,7 +87,7 @@ tabla <- datos_tabla |>
   # notas al pie
   tab_options(table_body.hlines.style = "solid", table_body.hlines.width = 8, table_body.hlines.color = "white",
               table_body.vlines.style = "solid", table_body.vlines.width = 8, table_body.vlines.color = "white") |> 
-  tab_footnote(footnote = glue("Fuente: Servel (provisorios.servel.cl), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}")) |> 
+  tab_footnote(footnote = glue("Fuente: Servel (elecciones.servel.cl), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}")) |> 
   tab_footnote(footnote = glue("Elaboración: Bastián Olea Herrera")) |>
   tab_style(locations = cells_footnotes(), 
             style = cell_text(align = "right", size = px(12))) |> 
