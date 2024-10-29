@@ -5,4 +5,8 @@
 .DS_Store
 .quarto
 .rds
-output/
+output/*
+salidas/*
+graficos/resultados/*
+tablas/resultados/*
+servel_scraping.R
