@@ -33,11 +33,12 @@ datos_resultados_rm <- datos_todos |>
   filter(!is.na(candidato)) |> 
   filter(comuna %in% comunas_rm) |>
   # datos aleatorios
-  # mutate(votos = sample(100:999, n())) |> 
+  # mutate(votos = sample(100:999, n())) |>
+  # mutate(porcentaje = votos/sum(votos), .by = comuna) |> 
   # seleccionar ganadores
-  group_by(comuna) |> 
-  slice_max(votos, with_ties = FALSE) |> 
-  ungroup() |> 
+  # group_by(comuna) |> 
+  # slice_max(votos, with_ties = FALSE) |> 
+  # ungroup() |> 
   # arreglar etiquetas
   mutate(porcentaje_t = scales::percent(porcentaje, accuracy = 0.1, trim = TRUE)) |> 
   group_by(comuna) |> 
@@ -49,24 +50,32 @@ datos_resultados_rm <- datos_todos |>
 
 
 mesas_rm <- datos_resultados_rm |> 
-  summarize(mesas_escrutadas = sum(mesas_escrutadas, na.rm = T), 
-            mesas_totales = sum(mesas_totales, na.rm = T)) |> 
+  summarize(mesas_escrutadas = sum(mesas_escrutadas), 
+            mesas_totales = sum(mesas_totales)) |> 
   mutate(mesas_porcentaje = mesas_escrutadas/mesas_totales) |> 
   mutate(mesas_porcentaje = replace_na(mesas_porcentaje, 0))
 
 
-datos_resultados_rm |> 
-  count(partido)
+datos_resultados_rm_2 <- datos_resultados_rm |> 
+  select(comuna, candidato, porcentaje) |> 
+  pivot_wider(names_from = candidato, 
+              values_from = porcentaje) |> 
+  janitor::clean_names() |> 
+  mutate(ganando = case_when(claudio_orrego >= francisco_orrego ~ "Claudio Orrego",
+                            francisco_orrego > claudio_orrego ~ "Francisco Orrego")) |> 
+  # mutate(diferencia = case_when(ganando == "Claudio Orrego" & claudio_orrego - francisco_orrego > .5 ~ .5,
+  #                               ganando == "Claudio Orrego" & claudio_orrego - francisco_orrego > .1 ~ .1,
+  #                               ganando == "Claudio Orrego" & claudio_orrego - francisco_orrego > .05 ~ .05,
+  #                               ganando == "Francisco Orrego" & francisco_orrego - claudio_orrego > .5 ~ .5,
+  #                               ganando == "Francisco Orrego" & francisco_orrego - claudio_orrego > .1 ~ .1,
+  #                               ganando == "Francisco Orrego" & francisco_orrego - claudio_orrego > .05 ~ .05,
+  #                               ))
+  mutate(diferencia = case_when(ganando == "Claudio Orrego" ~ claudio_orrego - francisco_orrego,
+                                ganando == "Francisco Orrego" ~ francisco_orrego - claudio_orrego
+  ))
 
-datos_resultados_rm |> 
-  count(candidato)
-
-datos_resultados_rm |> 
-  count(sector)
-
-datos_resultados_rm |> 
-  count(partido, sector) |> 
-  arrange(sector)
+datos_resultados_rm_2 |> 
+  filter(comuna == "PUENTE ALTO")
 
 
 # mapas ----
@@ -98,7 +107,7 @@ mapa_filtrado_urbano <- st_intersection(st_as_sf(mapa_filtrado),
                                           st_union())
 
 # coindir comunas ----
-datos_resultados_rm_join <- datos_resultados_rm |> 
+datos_resultados_rm_2_join <- datos_resultados_rm_2 |> 
   mutate(comuna_match = tolower(comuna)) |> 
   mutate(comuna_match = case_match(comuna_match, 
                                    "aysen" ~ "aisen",
@@ -118,7 +127,7 @@ mapa_filtrado_urbano_join <- mapa_filtrado_urbano |>
 
 
 # unir mapa con datos ----
-mapa_resultados_rm <- left_join(datos_resultados_rm_join |> select(1:7, comuna_match),
+mapa_resultados_rm_p <- left_join(datos_resultados_rm_2_join,
                                 mapa_filtrado_urbano_join,
                                 by = "comuna_match") |> 
   filter(!is.na(codigo_comuna)) |> 
@@ -138,30 +147,38 @@ mapa_resultados_rm <- left_join(datos_resultados_rm_join |> select(1:7, comuna_m
 
 
 # graficar mapa ganador ----
-mapa_base_rm <- mapa_resultados_rm |> 
+mapa_rm_p <- mapa_resultados_rm_p |> 
   ggplot(aes(geometry = geometry)) +
   # fondos
-  geom_sf(aes(fill = candidato),
+  geom_sf(aes(fill = ganando, alpha = diferencia),
           col = color_fondo,
-          alpha = 1, linewidth = 0.4) +
+          linewidth = 0.4) +
   # nombres de comunas
   geom_sf_text(aes(label = comuna_t), 
-               size = 1.8, alpha = .3, color = "white", 
+               size = 1.8, alpha = .6, color = "white", 
                family = tipografia, fontface = "bold") +
   # 
   coord_sf(xlim = c(-70.798, -70.45), 
            ylim = c(-33.32, -33.645),
            expand = TRUE) +
+  scale_alpha_binned(range = c(0.3, 1), 
+                     # breaks = c(.02, .05, .1, .2, 1)
+                     labels = scales::label_percent()
+                     ) +
   scale_fill_manual(values = c("Claudio Orrego" = color$centro,
                                "Francisco Orrego" = color$derecha), 
                     aesthetics = c("color", "fill")) +
-  theme_classic(base_family = tipografia)
+  theme_classic(base_family = tipografia) +
+  guides(fill = guide_legend(title = "Candidato mayoritario"),
+         alpha = guide_legend(title = "Porcentaje de ventaja\nde candidato mayoritario",
+                              override.aes = list(fill = "black"))
+  )
 
-mapa_base_rm
+mapa_rm_p
 
 
 # temas ----
-mapa_rm <- mapa_base_rm +  
+mapa_rm_p_2 <- mapa_rm_p +  
   # títulos
   theme(text = element_text(family = tipografia, color = color_texto), 
         plot.subtitle = element_text(margin = margin(t = -2, b = 6)), 
@@ -190,12 +207,11 @@ mapa_rm <- mapa_base_rm +
        caption = glue("Fuente: Servel ({eleccion_url}), obtenido a las {fecha_scraping |> format('%H:%M')}\nElaboración: Bastián Olea Herrera"))
 
 
-mapa_rm
+mapa_rm_p_2
 
 
 # guardar ----
-ggsave(plot = mapa_rm,
-       filename = glue("mapas/resultados/{eleccion}/servel_mapa_rm_resultados_{now()}.jpg"),
+ggsave(plot = mapa_rm_p_2,
+       filename = glue("mapas/resultados/{eleccion}/servel_mapa_rm_p_resultados_{now()}.jpg"),
        width = 6, height = 4.9, scale = 0.9
 )
- 

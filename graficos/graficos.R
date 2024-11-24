@@ -63,7 +63,7 @@ opt_nudge = 0.006
 opts_corte = 0.045 * n_candidatos
 opts_size_texto = 4
 opt_ancho_col = .4
-opt_expand_x = 0.1
+opt_expand_x = 0.2
 
 
 ## base ----

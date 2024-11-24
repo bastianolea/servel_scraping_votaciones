@@ -33,11 +33,13 @@ source("datos/comunas.R")
 #                      "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "VIÑA DEL MAR")
 
 # comunas_elegidas <- comunas_interes
-# comunas_elegidas <- c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "MAIPU", 
-#                       "SAN MIGUEL", "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "VIÑA DEL MAR", 
+# comunas_elegidas <- c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "MAIPU",
+#                       "SAN MIGUEL", "PROVIDENCIA", "LAS CONDES", "LA PINTANA",
 #                       "RECOLETA", "MACUL","LA CISTERNA",
-#                       "ESTACION CENTRAL", "PEÑALOLEN", "VALPARAISO", "RENCA")
-comunas_elegidas <- c("ÑUÑOA", "LAS CONDES", "PEÑALOLEN")
+#                       "ESTACION CENTRAL", "PEÑALOLEN", "RENCA")
+
+# comunas_elegidas <- c("SANTIAGO", "PUENTE ALTO", "LAS CONDES", "PEÑALOLEN")
+comunas_elegidas <- c("SANTIAGO", "ESTACION CENTRAL", "INDEPENDENCIA", "RECOLETA")
 
 # generar salidas ----
 walk(comunas_elegidas, \(comuna_elegida) {
@@ -50,12 +52,15 @@ walk(comunas_elegidas, \(comuna_elegida) {
   source("tablas/tablas.R", local = TRUE)
   
   # generar mapa
-  source("mapas/mapa_gobernadores_rm.R", local = TRUE)
+  # source("mapas/mapa_gobernadores_rm.R", local = TRUE)
+  
+  # source("mapas/mapa_gobernadores_rm_p.R", local = TRUE)
   
   # copiar a carpeta de outputs
   file_copy(c(ultimo_archivo(glue("graficos/resultados/{eleccion}")),
-              ultimo_archivo(glue("tablas/resultados/{eleccion}")),
-              ultimo_archivo(glue("mapas/resultados/{eleccion}"))), 
+              ultimo_archivo(glue("tablas/resultados/{eleccion}"))
+              # ultimo_archivo(glue("mapas/resultados/{eleccion}"))
+              ), 
             "salidas", overwrite = TRUE)
 })
 
