@@ -9,9 +9,11 @@ library(tidyr)
 library(forcats)
 
 # cargar ----
+# eleccion <- "alcaldes"
+eleccion <- "gobernadores"
 
 # cargar último resultado de servel_scraping.R
-archivos <- dir_info("datos/scraping") |> 
+archivos <- dir_info(paste0("datos/scraping/", eleccion)) |> 
   arrange(desc(modification_time))
 
 ultimo <- archivos |> slice(1)
@@ -20,15 +22,6 @@ tabla_1 <- read_rds(ultimo$path)
 
 fecha_scraping <- ultimo$modification_time
 
-
-# tabla_1 |> 
-#   list_rbind() |> 
-#   janitor::clean_names() |> 
-#   filter(comuna == "MAIPU" | comuna == "COLCHANE" | comuna == "PEÑALOLEN") |> 
-#   select(mesas_texto) |> 
-#   distinct() |> 
-#   mutate(mesas_escrutadas = str_extract(mesas_texto, "\\d+\\.\\d+|\\d+") |> str_remove_all("\\."),
-#          mesas_totales = str_extract(mesas_texto, "\\d+\\.\\d+|\\d+") |> str_remove_all("\\."))
 
 # limpiar ----
 tabla_2 <- tabla_1 |> 

@@ -13,13 +13,15 @@ source("servel_limpiar.R")
 
 
 # elegir comuna ----
-# comunas_elegidas = "LA FLORIDA"
+source("datos/comunas.R")
+
+# comunas_elegidas = comunas_rm
 
 # comunas_elegidas <- sample(comunas, 1)
 
 # comunas_elegidas = c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "SAN MIGUEL",
 #                      "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "VIÑA DEL MAR")
-# source("datos/comunas.R")
+
 # comunas_elegidas <- comunas_interes
 # comunas_elegidas <- c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "MAIPU", 
 #                       "SAN MIGUEL", "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "VIÑA DEL MAR", 
