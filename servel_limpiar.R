@@ -31,39 +31,27 @@ tabla_2 <- tabla_1 |>
   fill(candidatos, .direction = "down") |> 
   mutate(votos = str_remove_all(votos, "\\.") |> as.numeric()) |> 
   mutate(total_votos = sum(votos)) |> 
-  mutate(across(c(mesas_escrutadas, mesas_totales), as.numeric))
+  ungroup()
 
-# tabla_1 |> 
-#   list_rbind() |> 
-#   filter(comuna == "PROVIDENCIA")
 
-# repetidos ----
-# # marcar casos repetidos (misma cantidad de votos)
-# tabla_3 <- tabla_2 |> 
-#   group_by(comuna, total_votos) |> 
-#   nest() |> 
-#   ungroup() |> 
-#   mutate(repetido = ifelse(total_votos == lag(total_votos), TRUE, FALSE),
-#          repetido = replace_na(repetido, FALSE))
-# 
-# # ver comunas repetidas
-# tabla_3 |> 
-#   unnest(cols = everything()) |> 
-#   filter(repetido) |> 
-#   distinct(comuna)
-# 
-# # dejar solo las no repetidas
-# tabla_4 <- tabla_3 |> 
-#   unnest(cols = everything()) |> 
-#   filter(!repetido)
+# mesas ----
+tabla_3 <- tabla_2 |> 
+  # select(mesas_texto) |> 
+  mutate(mesas_texto_extraer = str_extract_all(mesas_texto, "\\d+\\,\\d+|\\d+")) |> 
+  rowwise() |> 
+  mutate(mesas_escrutadas = mesas_texto_extraer[[1]],
+         mesas_totales = mesas_texto_extraer[[2]]) |> 
+  ungroup() |> 
+  mutate(across(c(mesas_escrutadas, mesas_totales), as.numeric)) |> 
+  select(-mesas_texto_extraer)
 
 
 # marcar filas que no son candidatos ----
-tabla_5 <- tabla_2 |> 
+tabla_5 <- tabla_3 |> 
   # filter(comuna == "SAN JOAQUIN") |>
   # select(mesas_texto)
   mutate(tipo_totales = ifelse(lista_pacto %in% c("Válidamente Emitidos", "Votos Nulos", "Votos Blancos", "Votos en Blanco", "Total Votación"), TRUE, FALSE)) |> 
-  mutate(tipo_pacto = ifelse(lista_pacto |> str_detect("^\\w+ - \\w+|CANDIDATURAS INDEPENDIENTES"), TRUE, FALSE)) |> 
+  mutate(tipo_pacto = ifelse(lista_pacto |> str_detect("^\\w+ - \\w+|CANDIDATURAS INDEPENDIENTES|^\\w+-\\w+"), TRUE, FALSE)) |> 
   # corregir cifras
   mutate(votos = votos |> str_remove("\\.") |> as.numeric(),
          # mesas_escrutadas = mesas_escrutadas |> str_remove_all("\\.") |> as.numeric(),
@@ -74,8 +62,7 @@ tabla_5 <- tabla_2 |>
          # porcentaje = porcentaje / 100
          ) |> 
   # recalcular total de votos
-  group_by(comuna) |> 
-  mutate(total_votos = sum(votos))
+  mutate(total_votos = sum(votos), .by = comuna)
 
 # tabla_5
 
@@ -97,7 +84,12 @@ tabla_6 <- tabla_5 |>
   rename(candidato = lista_pacto) |> 
   mutate(candidato = str_remove(candidato, "^\\d+"),
          candidato = candidato |> str_trim(),
-         candidato = str_to_title(candidato))
+         candidato = str_to_title(candidato)) |> 
+  # arreglar lista
+  mutate(lista = str_remove(lista, "^\\w+-"))
+  
+# tabla_6
+
 
 # sumar nulos y blancos ----
 tabla_7 <- tabla_6 |> 
@@ -120,7 +112,9 @@ tabla_8 <- tabla_7 |>
   mutate(mesas_porcentaje = mesas_escrutadas / mesas_totales) |> 
   # missings a cero
   mutate(across(where(is.numeric), ~replace_na(.x, 0))) |> 
-  ungroup()
+  ungroup() |> 
+  relocate(porcentaje, .after = votos) |> 
+  relocate(total_votos, .after = porcentaje)
 
 
 # sector político ----
@@ -138,6 +132,7 @@ tabla_9 <- tabla_8 |>
     candidato == "Matias Jair Toledo Herrera" ~ "Izquierda",
     candidato == "Catalina San Martin Cavada" ~ "Derecha",
     # chantas que se hacen pasar por independientes
+    candidato == "Claudio Orrego Larrain" ~ "Centro",
     candidato == "Ivan Poduje Capdeville" ~ "Derecha", # viña
     candidato == "Karla Rubilar Barahona" ~ "Derecha", # puente alto
     candidato == "Daniel Reyes Morales" ~ "Derecha", # la florida
@@ -153,22 +148,26 @@ tabla_9 <- tabla_8 |>
     sector == "Independiente" & str_detect(tolower(lista), "contigo") ~ "Izquierda",
     .default = sector)) |> 
   # ordenar factor de sector político
-  mutate(sector = fct_relevel(sector, "Derecha", "Izquierda", "Independiente", "Centro", "Otros"))
+  mutate(sector = fct_relevel(sector, "Derecha", "Izquierda", "Independiente", "Centro", "Otros")) |> 
+  relocate(sector, .after = partido)
 
 tabla_9 |> 
   filter(comuna == "SAN JOAQUIN") |> 
   select(1:5, sector)
 
 tabla_9 |> 
-  filter(comuna == "ARICA") |> 
+  filter(comuna == "LA FLORIDA") |> 
   select(1:5, sector)
+
 # RENCA CENTRO
 # ARICA IZQ
 
 # corregir nombres ----
 tabla_10 <- tabla_9 |> 
   mutate(candidato = str_replace_all(candidato,
-                                     c("Iraci" = "Irací",
+                                     c("Larrain" = "Larraín",
+                                       "Gutierrez" = "Gutiérrez",
+                                       "Iraci" = "Irací",
                                        "Matias" = "Matías",
                                        "Martin" = "Martín",
                                        "Ivan" = "Iván",
@@ -182,3 +181,9 @@ tabla_10 <- tabla_9 |>
 
 # terminar
 datos_todos <- tabla_10
+
+datos_todos |> 
+  print(n=Inf)
+
+
+readr::write_csv2(datos_todos, "datos/resultados_gobernadores_2024.csv")

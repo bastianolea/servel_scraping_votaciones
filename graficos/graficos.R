@@ -119,14 +119,15 @@ grafico_3 <- grafico_2 +
         legend.key.size = unit(4, "mm"),
         legend.key.spacing.y = unit(1.5, "mm"))
 
+
 ## textos ----
 grafico_4 <- grafico_3 +
-  labs(title = "_Resultados parciales:_ Elecciones Municipales 2024",
+  labs(title = glue("_Resultados parciales:_ {eleccion_titulo}"),
        subtitle = glue("**{comuna_t}**"),
        fill = "Sector político",
        y = "Candidaturas", #glue("Candidaturas en {comuna_t}"),
        x = glue("Porcentaje de votos ({p_mesas} de mesas escrutadas)"),
-       caption = glue("Fuente: Servel (elecciones.servel.cl), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}\nElaboración: Bastián Olea Herrera")) +
+       caption = glue("Fuente: Servel ({eleccion_url}), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}\nElaboración: Bastián Olea Herrera")) +
   theme(plot.title = element_markdown(),
         plot.subtitle = element_markdown(),
         plot.caption = element_text(margin = margin(t = 10), lineheight = 1, colour = color_texto))
@@ -134,6 +135,6 @@ grafico_4 <- grafico_3 +
 grafico_4
 
 # guardar ----
-ggsave(filename = glue("graficos/resultados/servel_grafico_{comuna_t}_{formatear_fecha(fecha_scraping)}.jpg"),
+ggsave(filename = glue("graficos/resultados/{eleccion}/servel_grafico_{comuna_t}_{formatear_fecha(fecha_scraping)}.jpg"),
        width = 5, height = (1.4 + (n_candidatos * 0.3)), scale = 1.5
 )

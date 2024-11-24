@@ -33,15 +33,15 @@ datos_tabla <- datos_todos |>
          candidato = fct_reorder(candidato, porcentaje),
          candidato = fct_relevel(candidato, "Nulo/Blanco",after = 0))
 
-n_mesas = datos_grafico$mesas_escrutadas[1]
-total_mesas = datos_grafico$mesas_totales[1]
-p_mesas = datos_grafico$mesas_porcentaje[1] |> percent(accuracy = 0.01, trim = TRUE)
+n_mesas = datos_tabla$mesas_escrutadas[1]
+total_mesas = datos_tabla$mesas_totales[1]
+p_mesas = datos_tabla$mesas_porcentaje[1] |> percent(accuracy = 0.01, trim = TRUE)
 
 tabla <- datos_tabla |> 
   arrange(desc(candidato)) |>
   select(candidato, partido, votos, porcentaje, sector) |> 
   gt() |> 
-  tab_header(title = md("_Resultados parciales:_ Elecciones Municipales 2024"),
+  tab_header(title = md(glue("_Resultados parciales:_ {eleccion_titulo}")),
              subtitle = md(glue("**{comuna_t}** ({p_mesas} de mesas escrutadas)"))) |> 
   # formato de números
   fmt_percent(porcentaje, decimals = 1) |> 
@@ -51,13 +51,13 @@ tabla <- datos_tabla |>
   data_color(columns = sector, #rows = candidato != "Nulo/Blanco", 
              target_columns = partido,
              method = "factor", levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
-             palette = c(color$derecha, color$izquierda, color$independiente, color$centro, color_detalle3),
+             palette = c(color$derecha, color$centro, color$izquierda, color$independiente,  color_detalle3),
              apply_to = "text") |>
   # color fondo partidos
   data_color(columns = sector,  rows = candidato != "Nulo/Blanco", 
              target_columns = partido,
              method = "factor", levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
-             palette = c(color$derecha, color$izquierda, color$independiente, color$centro, color_detalle3),
+             palette = c(color$derecha, color$centro, color$izquierda, color$independiente, color_detalle3),
              alpha = .2, apply_to = "fill", autocolor_text = FALSE) |> 
   cols_label(candidato = "Candidato/a",
              partido = "Partido",
@@ -87,7 +87,7 @@ tabla <- datos_tabla |>
   # notas al pie
   tab_options(table_body.hlines.style = "solid", table_body.hlines.width = 8, table_body.hlines.color = "white",
               table_body.vlines.style = "solid", table_body.vlines.width = 8, table_body.vlines.color = "white") |> 
-  tab_footnote(footnote = glue("Fuente: Servel (elecciones.servel.cl), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}")) |> 
+  tab_footnote(footnote = glue("Fuente: Servel ({eleccion_url}), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}")) |> 
   tab_footnote(footnote = glue("Elaboración: Bastián Olea Herrera")) |>
   tab_style(locations = cells_footnotes(), 
             style = cell_text(align = "right", size = px(12))) |> 
@@ -99,6 +99,6 @@ tabla
 
 # guardar ----
 gtsave(tabla, 
-       filename = glue("tablas/resultados/servel_tabla_{comuna_t}_{formatear_fecha(fecha_scraping)}.png"),
+       filename = glue("tablas/resultados/{eleccion}/servel_tabla_{comuna_t}_{formatear_fecha(fecha_scraping)}.png"),
        quiet = TRUE) |> 
   suppressWarnings()

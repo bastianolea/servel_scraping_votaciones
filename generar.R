@@ -3,6 +3,16 @@ library(fs)
 library(purrr)
 source("funciones.R")
 
+# eleccion <- "alcaldes"
+eleccion <- "gobernadores"
+
+# eleccion_titulo <- "Elecciones Municipales 2024"
+eleccion_titulo <- "Elecciones de Gobernadores 2024"
+
+# eleccion_url <- "elecciones.servel.cl"
+eleccion_url <- "eleccionesgore.servel.cl"
+
+
 # eliminar anteriores
 file_delete(dir_ls("salidas"))
 
@@ -32,16 +42,20 @@ comunas_elegidas <- c("ÑUÑOA", "LAS CONDES", "PEÑALOLEN")
 # generar salidas ----
 walk(comunas_elegidas, \(comuna_elegida) {
   message("generando salidas para comuna ", comuna_elegida)
-  
+  # comuna_elegida = "LA FLORIDA"
   # generar gráficos
   source("graficos/graficos.R", local = TRUE)
   
   # generar tablas
   source("tablas/tablas.R", local = TRUE)
   
+  # generar mapa
+  source("mapas/mapa_gobernadores_rm.R", local = TRUE)
+  
   # copiar a carpeta de outputs
-  file_copy(c(ultimo_archivo("graficos/resultados"),
-              ultimo_archivo("tablas/resultados")), 
+  file_copy(c(ultimo_archivo(glue("graficos/resultados/{eleccion}")),
+              ultimo_archivo(glue("tablas/resultados/{eleccion}")),
+              ultimo_archivo(glue("mapas/resultados/{eleccion}"))), 
             "salidas", overwrite = TRUE)
 })
 
