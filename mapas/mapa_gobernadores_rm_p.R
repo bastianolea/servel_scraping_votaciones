@@ -36,6 +36,7 @@ eleccion_titulo <- "Elecciones de Gobernadores 2024"
 # eleccion_url <- "elecciones.servel.cl"
 eleccion_url <- "eleccionesgore.servel.cl"
 
+# datos ----
 
 # filtrar comuna
 datos_resultados_rm <- datos_todos |>
@@ -59,14 +60,16 @@ datos_resultados_rm <- datos_todos |>
   ungroup() |> 
   relocate(sector, .after = partido)
 
-
+## mesas ----
 mesas_rm <- datos_resultados_rm |> 
   summarize(mesas_escrutadas = sum(mesas_escrutadas), 
             mesas_totales = sum(mesas_totales)) |> 
   mutate(mesas_porcentaje = mesas_escrutadas/mesas_totales) |> 
   mutate(mesas_porcentaje = replace_na(mesas_porcentaje, 0))
 
+p_mesas <- percent(mesas_rm$mesas_porcentaje, accuracy = 0.01, decimal.mark = ",")
 
+## cálculo diferencias ----
 datos_resultados_rm_2 <- datos_resultados_rm |> 
   select(comuna, candidato, porcentaje) |> 
   pivot_wider(names_from = candidato, 
@@ -85,8 +88,8 @@ datos_resultados_rm_2 <- datos_resultados_rm |>
                                 ganando == "Francisco Orrego" ~ francisco_orrego - claudio_orrego
   ))
 
-datos_resultados_rm_2 |> 
-  filter(comuna == "PUENTE ALTO")
+# datos_resultados_rm_2 |> 
+#   filter(comuna == "PUENTE ALTO")
 
 
 # mapas ----
@@ -157,7 +160,7 @@ mapa_resultados_rm_p <- left_join(datos_resultados_rm_2_join,
 
 
 
-# graficar mapa ganador ----
+# mapa base ----
 mapa_rm_p <- mapa_resultados_rm_p |> 
   ggplot(aes(geometry = geometry)) +
   # fondos
@@ -215,9 +218,11 @@ mapa_rm_p_2 <- mapa_rm_p +
   # guides(fill = guide_none()) +
   # textos
   labs(title = glue("**Resultados parciales:** {eleccion_titulo}"),
-       subtitle = glue("Candidatura mayoritaria por comuna, al {percent(mesas_rm$mesas_porcentaje, accuracy = 0.01)} de mesas escrutadas"),
+       subtitle = glue("Candidatura mayoritaria por comuna, al {p_mesas} de mesas escrutadas"),
        fill = "Candidato a Gobernador", x = NULL, y = NULL,
-       caption = glue("Fuente: Servel ({eleccion_url}), obtenido a las {fecha_scraping |> format('%H:%M')}\nElaboración: Bastián Olea Herrera"))
+       # caption = glue("Fuente: Servel ({eleccion_url}), obtenido a las {fecha_scraping |> format('%H:%M')}\nElaboración: Bastián Olea Herrera")
+       caption = glue("Fuente: Servel ({eleccion_url}), obtenido el {fecha_scraping |> format('%d de %B')}\nElaboración: Bastián Olea Herrera")
+       )
 
 
 mapa_rm_p_2

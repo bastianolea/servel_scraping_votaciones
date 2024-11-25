@@ -151,16 +151,14 @@ tabla_9 <- tabla_8 |>
   mutate(sector = fct_relevel(sector, "Derecha", "Izquierda", "Independiente", "Centro", "Otros")) |> 
   relocate(sector, .after = partido)
 
-tabla_9 |> 
-  filter(comuna == "SAN JOAQUIN") |> 
-  select(1:5, sector)
+# tabla_9 |> 
+#   filter(comuna == "SAN JOAQUIN") |> 
+#   select(1:5, sector)
+# 
+# tabla_9 |> 
+#   filter(comuna == "LA FLORIDA") |> 
+#   select(1:5, sector)
 
-tabla_9 |> 
-  filter(comuna == "LA FLORIDA") |> 
-  select(1:5, sector)
-
-# RENCA CENTRO
-# ARICA IZQ
 
 # corregir nombres ----
 tabla_10 <- tabla_9 |> 
@@ -187,3 +185,4 @@ datos_todos |>
 
 
 readr::write_csv2(datos_todos, "datos/resultados_gobernadores_2024.csv")
+message("Datos limpios guardados")

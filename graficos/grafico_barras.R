@@ -1,3 +1,34 @@
+library(dplyr)
+library(forcats)
+library(stringr)
+library(glue)
+library(scales)
+library(ggplot2)
+library(sysfonts)
+library(showtext)
+library(ragg)
+library(ggtext)
+
+# tipografía
+tipografia = "Open Sans"
+font_add_google(tipografia, tipografia, db_cache = TRUE)
+showtext_auto()
+showtext_opts(dpi = 290)
+
+source("funciones.R")
+source("datos/colores.R")
+
+eleccion <- "gobernadores"
+
+# eleccion_titulo <- "Elecciones Municipales 2024"
+eleccion_titulo <- "Elecciones de Gobernadores 2024"
+
+# eleccion_url <- "elecciones.servel.cl"
+eleccion_url <- "eleccionesgore.servel.cl"
+
+# datos ----
+source("servel_limpiar.R")
+
 datos_barras <- datos_todos |> 
   mutate(candidato = str_extract(candidato, "\\w+ \\w+")) |> 
   # filter(!is.na(candidato)) |> 
@@ -14,10 +45,10 @@ p_mesas <- datos_todos |>
   ungroup() |> 
   summarize(mean(mesas_porcentaje)) |> 
   pull() |> 
-  percent(accuracy = 0.01, trim = TRUE)
+  percent(accuracy = 0.01, decimal.mark = ",")
 
-
-barras <- datos_barras |> 
+# gráfico base ----
+barras_base <- datos_barras |> 
   arrange(desc(total)) |>
   # ranking
   mutate(rank = dense_rank(desc(total))) |> 
@@ -33,15 +64,14 @@ barras <- datos_barras |>
              size = 2.8, alpha = .9,
              show.legend = FALSE) +
   geom_text(aes(label = ifelse(porcentaje > .2, porcentaje_t, "")),
-                position = position_stack(vjust = 0.5),
+            position = position_stack(vjust = 0.5),
             size = 2.6, family = tipografia, fontface = "bold", color = "white") +
-  labs(title = glue("**Resultados parciales:** {eleccion_titulo}"),
-       subtitle = glue("_Región Metropolitana_ (35 comunas con más votos)"),
-       fill = "Candidatos",
-       y = NULL,
-       x = glue("Porcentaje de votos ({p_mesas} de mesas escrutadas)"),
-       caption = glue("Fuente: Servel ({eleccion_url}), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}\nElaboración: Bastián Olea Herrera")) +
-  theme_classic() +
+  theme_classic()
+
+barras_base
+
+# temas ----
+barras <- barras_base +
   scale_y_discrete(expand = expansion(c(0.028, 0.028))) +
   scale_x_continuous(expand = expansion(c(0.028, 0.036)),
                      labels = scales::label_percent(accuracy = 1)) +
@@ -71,19 +101,28 @@ barras <- datos_barras |>
         axis.ticks.y = element_blank()) +
   # leyenda
   theme(#legend.title = element_text(face = "italic", size = 9),
-        legend.text = element_text(size = 9, margin = margin(l = 4)),
-        legend.title = element_blank(),
-        legend.justification = c(1, 0),
-        legend.background = element_rect(fill = color_fondo),
-        legend.key.size = unit(4, "mm"),
-        legend.key.spacing.y = unit(1.5, "mm")) +
+    legend.text = element_text(size = 9, margin = margin(l = 4)),
+    legend.title = element_blank(),
+    legend.justification = c(1, 0),
+    legend.background = element_rect(fill = color_fondo),
+    legend.key.size = unit(4, "mm"),
+    legend.key.spacing.y = unit(1.5, "mm")) +
   theme(plot.title = element_markdown(),
         plot.subtitle = element_markdown(margin = margin(t = -3, b = 5)),
-        plot.caption = element_text(margin = margin(t = 10), lineheight = 1, colour = color_texto))
+        plot.caption = element_text(margin = margin(t = 10), lineheight = 1, colour = color_texto)) +
+  labs(title = glue("**Resultados parciales:** {eleccion_titulo}"),
+       subtitle = glue("_Región Metropolitana_ (35 comunas con más votos)"),
+       fill = "Candidatos",
+       y = NULL,
+       x = glue("Porcentaje de votos ({p_mesas} de mesas escrutadas)"),
+       # caption = glue("Fuente: Servel ({eleccion_url}), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}\nElaboración: Bastián Olea Herrera")
+       caption = glue("Fuente: Servel ({eleccion_url}), obtenido el {fecha_scraping |> format('%d de %B')}\nElaboración: Bastián Olea Herrera")
+  )
 
 
 barras
 
+# guardar ----
 ggsave(filename = glue("graficos/resultados/{eleccion}/servel_grafico_barras_{now()}.jpg"),
        width = 3.6, height = 5, scale = 1.5
 )
