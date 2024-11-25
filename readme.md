@@ -6,13 +6,13 @@ Flujo de R que scrapea datos desde el Servel, limpia los datos, y retorna visual
 
 ## Elecciones Regionales 2024: Gobernadores regionales
 
-![](selección/servel_mapa_rm_p_resultados_2024-11-24 23:49:38.929478.jpg)
+![Mapa de resultados comunales de elección de gobernadores 2024](selección/servel_mapa_rm_p_resultados_2024-11-24.jpg)
 
 Por las elecciones de Gobernadores de 2ª vuelta, nuevamente hice una pequeña cobertura en tiempo real de los resultados electorales. 
 
 Modifiqué el sistema de web scrapping y generación automática de gráficos y tablas que usé para las elecciones regionales de octubre, esta vez enfocándome en resultados comunales y ventajas porcentuales. En menos de media hora ya había adaptado el sistema de la elección anterior para obtener los datos nuevos, ubicados en un sitio distinto, y adaptados a una elección de características diferentes. Mientras los datos se iban scrapeando automáticamente, pude dedicarme a desarrollar nuevas visualizaciones para presentar los resultados, conectar estas visualizaciones al flujo de trabajo, y empezar a obtenerlas de forma automática.
 
-![](selección/servel_grafico_barras_2024-11-24 23:46:25.105104.jpg)
+![resultados comunales de elección de gobernadores 2024](selección/servel_grafico_barras_2024-11-24.jpg)
 
 Lamentablemente para mi (pero afortunadamente para el Servel) el conteo fue extremadamente rápido, así que solo pude hacer 3 o 4 actualizaciones de datos/visualizaciones y los conteos ya habían llegado a sobre el 95% de mesas escrutadas 🥲
 
