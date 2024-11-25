@@ -13,7 +13,7 @@ library(ggtext)
 tipografia = "Open Sans"
 font_add_google(tipografia, tipografia, db_cache = TRUE)
 showtext_auto()
-# showtext_opts(dpi = 290)
+showtext_opts(dpi = 290)
 
 source("funciones.R")
 source("datos/colores.R")
@@ -146,7 +146,7 @@ mapa_base_rm <- mapa_resultados_rm |>
           alpha = 1, linewidth = 0.4) +
   # nombres de comunas
   geom_sf_text(aes(label = comuna_t), 
-               size = 1.8, alpha = .3, color = "white", 
+               size = 1.8, alpha = .8, color = "white", 
                family = tipografia, fontface = "bold") +
   # 
   coord_sf(xlim = c(-70.798, -70.45), 

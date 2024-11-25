@@ -18,36 +18,47 @@ p_mesas <- datos_todos |>
 
 
 barras <- datos_barras |> 
-  arrange(desc(total)) |> 
-  slice_max(total, n = 90) |> 
+  arrange(desc(total)) |>
+  # ranking
+  mutate(rank = dense_rank(desc(total))) |> 
+  filter(rank <= 35) |> 
+  # ordenar factores
   mutate(comuna = fct_reorder(comuna, total)) |> 
   ggplot() +
   aes(x = porcentaje, y = comuna, fill = candidato) +
   geom_col(width = .7, position = position_stack()) +
+  geom_point(data = ~group_by(.x, comuna) |> 
+               slice_max(votos),
+             aes(x = 1.035, color = candidato), 
+             size = 2.8, alpha = .9,
+             show.legend = FALSE) +
   geom_text(aes(label = ifelse(porcentaje > .2, porcentaje_t, "")),
                 position = position_stack(vjust = 0.5),
-            size = 3, family = tipografia, fontface = "bold", color = "white", alpha = .8) +
-  labs(title = glue("_Resultados parciales:_ {eleccion_titulo}"),
-       subtitle = glue("Región Metropolitana"),
+            size = 2.6, family = tipografia, fontface = "bold", color = "white") +
+  labs(title = glue("**Resultados parciales:** {eleccion_titulo}"),
+       subtitle = glue("_Región Metropolitana_ (35 comunas con más votos)"),
        fill = "Candidatos",
        y = NULL,
        x = glue("Porcentaje de votos ({p_mesas} de mesas escrutadas)"),
        caption = glue("Fuente: Servel ({eleccion_url}), obtenido el {fecha_scraping |> format('%d de %B')} a las {fecha_scraping |> format('%H:%M')}\nElaboración: Bastián Olea Herrera")) +
   theme_classic() +
-  scale_x_continuous(expand = expansion(c(0.02, 0)),
+  scale_y_discrete(expand = expansion(c(0.028, 0.028))) +
+  scale_x_continuous(expand = expansion(c(0.028, 0.036)),
                      labels = scales::label_percent(accuracy = 1)) +
   scale_fill_manual(values = c("Claudio Orrego" = color$centro,
                                "Francisco Orrego" = color$derecha,
                                "Nulos/blancos" = "grey60"), 
                     aesthetics = c("color", "fill")) +
-  guides(fill = guide_legend(position = "bottom")) +
+  guides(fill = guide_legend(position = "bottom"),
+         color = guide_legend(position = "bottom")) +
   # títulos
   theme(text = element_text(family = tipografia, color = color_texto), 
         plot.subtitle = element_text(margin = margin(t = -3)), 
         plot.title.position = "plot") +
   # fondos
   theme(panel.background = element_rect(fill = color_fondo),
-        panel.grid.major.x = element_line(color = color_detalle, lineend = "round"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_blank(),
         plot.margin = unit(c(4, 8, 2, 4), "mm")) +
   # ejes
   theme(axis.title = element_text(face = "italic"),
@@ -59,15 +70,15 @@ barras <- datos_barras |>
         axis.ticks = element_line(color = color_texto, lineend = "round", linewidth = .7),
         axis.ticks.y = element_blank()) +
   # leyenda
-  theme(legend.title = element_text(face = "italic", size = 9),
+  theme(#legend.title = element_text(face = "italic", size = 9),
         legend.text = element_text(size = 9, margin = margin(l = 4)),
-        # legend.position.inside = c(0.98, 0.02),
+        legend.title = element_blank(),
         legend.justification = c(1, 0),
-        legend.background = element_rect(fill = alpha(color_fondo, 0.6)),
+        legend.background = element_rect(fill = color_fondo),
         legend.key.size = unit(4, "mm"),
         legend.key.spacing.y = unit(1.5, "mm")) +
   theme(plot.title = element_markdown(),
-        plot.subtitle = element_markdown(),
+        plot.subtitle = element_markdown(margin = margin(t = -3, b = 5)),
         plot.caption = element_text(margin = margin(t = 10), lineheight = 1, colour = color_texto))
 
 

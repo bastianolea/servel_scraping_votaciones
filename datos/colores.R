@@ -1,5 +1,5 @@
 color_texto = "#444444"
-color_fondo = "grey96"
+color_fondo = "grey95"
 color_detalle = "grey90"
 color_detalle2 = "grey70"
 color_detalle3 = "grey50"

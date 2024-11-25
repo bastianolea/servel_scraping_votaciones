@@ -1,3 +1,4 @@
+library(dplyr)
 library(ggplot2)
 library(sf)
 library(scales)
@@ -13,7 +14,7 @@ library(ggtext)
 tipografia = "Open Sans"
 font_add_google(tipografia, tipografia, db_cache = TRUE)
 showtext_auto()
-# showtext_opts(dpi = 290)
+showtext_opts(dpi = 290)
 
 source("funciones.R")
 source("datos/colores.R")
@@ -22,9 +23,19 @@ mapa <- readr::read_rds("datos/mapas/mapa_comunas.rds")
 mapa_urbano <- readr::read_rds("datos/mapas/mapa_rm_urbano.rds")
 region <- readr::read_rds("datos/mapas/mapa_region.rds")
 
-# source("servel_limpiar.R")
+source("servel_limpiar.R") # obtiene datos_todos
 source("datos/comunas.R")
 # comunas_rm
+
+# eleccion <- "alcaldes"
+eleccion <- "gobernadores"
+
+# eleccion_titulo <- "Elecciones Municipales 2024"
+eleccion_titulo <- "Elecciones de Gobernadores 2024"
+
+# eleccion_url <- "elecciones.servel.cl"
+eleccion_url <- "eleccionesgore.servel.cl"
+
 
 # filtrar comuna
 datos_resultados_rm <- datos_todos |>
@@ -161,7 +172,9 @@ mapa_rm_p <- mapa_resultados_rm_p |>
   coord_sf(xlim = c(-70.798, -70.45), 
            ylim = c(-33.32, -33.645),
            expand = TRUE) +
-  scale_alpha_binned(range = c(0.3, 1), 
+  scale_alpha_binned(range = c(0.35, 1), 
+                     limits = c(0.001, 0.301),
+                     # breaks = c(0.1, 0.2, 0.3, 0.4),
                      # breaks = c(.02, .05, .1, .2, 1)
                      labels = scales::label_percent()
                      ) +
@@ -194,7 +207,7 @@ mapa_rm_p_2 <- mapa_rm_p +
         legend.text = element_text(size = 9, margin = margin(l = 4)),
         legend.position.inside = c(0.98, 0.02),
         legend.justification = c(1, 0),
-        legend.background = element_rect(fill = alpha(color_fondo, 0.6)),
+        legend.background = element_rect(fill = color_fondo),
         legend.key.size = unit(4, "mm"),
         legend.key.spacing.y = unit(1.5, "mm")) +
   # ejes
