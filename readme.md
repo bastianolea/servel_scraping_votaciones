@@ -6,7 +6,7 @@ Flujo de R que scrapea datos desde el Servel, limpia los datos, y retorna visual
 
 ## Elecciones Regionales 2024: Gobernadores regionales
 
-![Mapa de resultados comunales de elección de gobernadores 2024, región Metropolitana](selección/servel_mapa_rm_p_resultados_2024-11-24 23:49:38.929478.jpg)
+!["Mapa de resultados comunales de elección de gobernadores 2024, región Metropolitana"](selección/servel_mapa_rm_p_resultados_2024-11-24 23:49:38.929478.jpg)
 
 Por las elecciones de Gobernadores de 2ª vuelta, nuevamente hice una pequeña cobertura en tiempo real de los resultados electorales. 
 
