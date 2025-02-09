@@ -1,4 +1,4 @@
-# Servel scraping votaciones
+# Resultados de votaciones de Servel por medio de web scraping
 
 Flujo de R que scrapea datos desde el Servel, limpia los datos, y retorna visualizaciones en gráficos y tablas.
 
@@ -59,7 +59,7 @@ Finalmente, el flujo de procesamientos de datos en R generó 238 gráficos y 240
 
 ----
 
-# Funcionamiento
+## Funcionamiento
 
 Los scripts `servel_scraping_x.R` realizan un web scraping (utilizando `{RSelenium}`) del sitio del Servel indicado que contengan los resultados. Los primeros pasos que los scrapping son apretar que el navegador automatizado y controlado por Selenium entre los resultados deseados, seleccione la desagregación geográfica, y obtenga las comunas disponibles para ver sus resultados. Luego se realiza una alteración a través de todas las comunas disponibles, donde el navegador automatizado entra a cada una de las comunas, da unos segundos de espera, y descarga la tabla de resultados y los párrafos de texto sobre las mesas escrutadas.
 
