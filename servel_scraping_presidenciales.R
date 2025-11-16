@@ -12,6 +12,8 @@ source("funciones.R")
 esperas = 2
 
 # abrir server ----
+if (exists("driver")) driver$server$stop()
+
 driver <- rsDriver(browser = "firefox", 
                    port = 4561L, verbose = F,
                    chromever = NULL, phantomver = NULL)
@@ -171,11 +173,6 @@ write_rds(tabla,
 
 
 # cerrar server ----
-
 driver$server$stop()
-# remote_driver$closeWindow()
-# remote_driver$quit()
-# remote_driver$stop()
-# remote_driver$closeall()
 
 message("OK")

@@ -7,12 +7,14 @@ library(sysfonts)
 library(showtext)
 library(ragg)
 library(ggtext)
+library(ggview)
 
 # tipografía
 tipografia = "Open Sans"
 font_add_google(tipografia, tipografia, db_cache = TRUE)
 showtext_auto()
 showtext_opts(dpi = 290)
+number_options(big.mark = ".", decimal.mark = ",")
 
 source("funciones.R")
 source("datos/colores.R")
@@ -36,12 +38,14 @@ datos_grafico <- datos_todos |>
   filter(comuna == comuna_elegida) |>
   # arreglar etiquetas
   mutate(porcentaje_t = percent(porcentaje, accuracy = 0.1, trim = TRUE)) |> 
-  mutate(partido = replace_na(partido, ""),
-         candidato = ifelse(partido == "", candidato, 
-                            glue("{candidato} ({partido})")),
-         candidato = candidato |> str_wrap(22),
-         candidato = fct_reorder(candidato, porcentaje),
-         candidato = fct_relevel(candidato, "Nulo/Blanco",after = 0)) |> 
+  mutate(#partido = replace_na(partido, ""),
+         # candidato = ifelse(partido == "", candidato, 
+         #                    glue("{candidato} ({partido})")),
+         candidato = candidato |> str_wrap(30),
+         # candidato = fct_reorder(candidato, porcentaje),
+         candidato = fct_reorder(candidato, orden, .desc = TRUE)
+         # candidato = fct_relevel(candidato, "Nulo/Blanco",after = 0)
+         ) |> 
   arrange(desc(candidato))
 
 n_candidatos = length(datos_grafico$candidato)
@@ -133,8 +137,9 @@ grafico_4 <- grafico_3 +
         plot.caption = element_text(margin = margin(t = 10), lineheight = 1, colour = color_texto))
 
 grafico_4
+  
 
 # guardar ----
 ggsave(filename = glue("graficos/resultados/{eleccion}/servel_grafico_{comuna_t}_{formatear_fecha(fecha_scraping)}.jpg"),
-       width = 5, height = (1.4 + (n_candidatos * 0.3)), scale = 1.5
+       width = 5, height = (1.4 + (n_candidatos * 0.2)), scale = 1.5
 )

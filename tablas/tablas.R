@@ -30,8 +30,8 @@ datos_tabla <- datos_todos |>
   # arreglar etiquetas
   mutate(porcentaje_t = scales::percent(porcentaje, accuracy = 0.1, trim = TRUE)) |> 
   mutate(partido = replace_na(partido, ""),
-         candidato = fct_reorder(candidato, porcentaje),
-         candidato = fct_relevel(candidato, "Nulo/Blanco",after = 0))
+         # candidato = fct_reorder(candidato, porcentaje),
+         candidato = fct_reorder(candidato, orden, .desc = TRUE))
 
 n_mesas = datos_tabla$mesas_escrutadas[1]
 total_mesas = datos_tabla$mesas_totales[1]
@@ -39,40 +39,44 @@ p_mesas = datos_tabla$mesas_porcentaje[1] |> percent(accuracy = 0.01, trim = TRU
 
 tabla <- datos_tabla |> 
   arrange(desc(candidato)) |>
-  select(candidato, partido, votos, porcentaje, sector) |> 
+  # select(candidato, partido, votos, porcentaje, sector) |>
+  select(candidato, votos, porcentaje, sector) |> 
   gt() |> 
   tab_header(title = md(glue("_Resultados parciales:_ {eleccion_titulo}")),
              subtitle = md(glue("**{comuna_t}** ({p_mesas} de mesas escrutadas)"))) |> 
   # formato de números
-  fmt_percent(porcentaje, decimals = 1) |> 
+  fmt_percent(porcentaje, decimals = 1,
+              sep_mark = ".", dec_mark = ",") |> 
   fmt_number(votos, 
              decimals = 0, sep_mark = ".", dec_mark = ",") |> 
-  # color texto partidos
-  data_color(columns = sector, #rows = candidato != "Nulo/Blanco", 
-             target_columns = partido,
-             method = "factor", levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
-             palette = c(color$derecha, color$centro, color$izquierda, color$independiente,  color_detalle3),
-             apply_to = "text") |>
-  # color fondo partidos
-  data_color(columns = sector,  rows = candidato != "Nulo/Blanco", 
-             target_columns = partido,
-             method = "factor", levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
-             palette = c(color$derecha, color$centro, color$izquierda, color$independiente, color_detalle3),
-             alpha = .2, apply_to = "fill", autocolor_text = FALSE) |> 
+  # # color texto partidos
+  # data_color(columns = sector, #rows = candidato != "Nulo/Blanco", 
+  #            target_columns = partido,
+  #            method = "factor", levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
+  #            palette = c(color$derecha, color$centro, color$izquierda, color$independiente,  color_detalle3),
+  #            apply_to = "text") |>
+  # # color fondo partidos
+  # data_color(columns = sector,  rows = candidato != "Nulo/Blanco", 
+  #            target_columns = partido,
+  #            method = "factor", levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
+  #            palette = c(color$derecha, color$centro, color$izquierda, color$independiente, color_detalle3),
+  #            alpha = .2, apply_to = "fill", autocolor_text = FALSE) |> 
   cols_label(candidato = "Candidato/a",
-             partido = "Partido",
+             # partido = "Partido",
              votos = "Votos",
              porcentaje = "%") |>
   # tipografía
   opt_table_font(font = google_font(tipografia)) |>
   # alineación de textos
-  cols_align(columns = c(candidato, partido, porcentaje), align = "left") |> 
-  cols_align(columns = c(partido), align = "center") |> 
+  # cols_align(columns = c(candidato, partido, porcentaje), align = "left") |> 
+  cols_align(columns = c(candidato, porcentaje), align = "left") |> 
+  # cols_align(columns = c(partido), align = "center") |> 
   cols_hide(sector) |>
   opt_table_lines("none") |>
   opt_align_table_header(align = "left") |> 
   # estilo de textos
-  tab_style(locations = cells_body(column = c(partido, porcentaje)), style = cell_text(weight = "bold")) |> 
+  # tab_style(locations = cells_body(column = c(partido, porcentaje)), style = cell_text(weight = "bold")) |> 
+  tab_style(locations = cells_body(column = c(porcentaje)), style = cell_text(weight = "bold")) |> 
   tab_style(locations = cells_column_labels(), style = cell_text(style = "italic")) |> 
   tab_style(locations = cells_body(rows = candidato == "Nulo/Blanco"), 
             style = cell_text(weight = "normal")) |> 

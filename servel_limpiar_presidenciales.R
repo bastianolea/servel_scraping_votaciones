@@ -53,7 +53,9 @@ tabla_4 <- tabla_3 |>
   # filtrar totales
   filter(candidatos != "Total Votación",
          candidatos != "Válidamente Emitidos") |> 
-  mutate(candidatos = str_remove(candidatos, "\\d+")) |> 
+  mutate(orden = str_extract(candidatos, "\\d+") |> as.numeric(),
+         orden = tidyr::replace_na(orden, 99)) |> 
+  mutate(candidatos = str_remove(candidatos, "\\d+")) |>
   mutate(candidatos = candidatos |> str_trim(),
          candidatos = str_to_title(candidatos)) |> 
   # blancos y nulos
@@ -64,8 +66,9 @@ tabla_4 <- tabla_3 |>
 tabla_5 <- tabla_4 |> 
   mutate(comuna = str_remove(comuna,
                              "Total Votación de la Comuna -"),
-         comuna = str_trim(comuna),
-         comuna = str_to_title(comuna))
+         comuna = str_trim(comuna)
+         # comuna = str_to_title(comuna)
+         )
 
 # sumar nulos y blancos ----
 tabla_6 <- tabla_5 |> 
@@ -76,6 +79,7 @@ tabla_6 <- tabla_5 |>
             # porcentaje = sum(porcentaje, na.rm = T),
             mesas_escrutadas = first(mesas_escrutadas),
             mesas_totales = first(mesas_totales), 
+            orden = first(orden),
             .groups = "drop") |> 
   ungroup()
 
@@ -142,15 +146,22 @@ tabla_10 <- tabla_8 |>
                                      c("Jose" = "José",
                                        "Artes" = "Artés",
                                        "Roman" = "Román"))
-  )
+  ) |> 
+  # ordenar
+  mutate(candidatos = forcats::fct_reorder(candidatos, orden)) |> 
+  arrange(comuna, candidatos)
 
 
 # terminar
 datos_todos <- tabla_10 |> 
-  rename(candidato = candidatos)
+  rename(candidato = candidatos) |> 
+  mutate(partido = "Ninguno",
+         sector = "Ninguno")
 
 datos_todos |> 
   print(n=Inf)
+
+datos_todos |> arrange(desc(votos))
 
 
 readr::write_csv2(datos_todos, "datos/resultados_presidenciales_2025.csv")

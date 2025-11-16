@@ -4,13 +4,15 @@ library(purrr)
 source("funciones.R")
 
 # eleccion <- "alcaldes"
-eleccion <- "gobernadores"
+# eleccion <- "gobernadores"
+eleccion <- "presidenciales"
 
 # eleccion_titulo <- "Elecciones Municipales 2024"
-eleccion_titulo <- "Elecciones de Gobernadores 2024"
+# eleccion_titulo <- "Elecciones de Gobernadores 2024"
+eleccion_titulo <- "Elecciones presidenciales 2025"
 
-# eleccion_url <- "elecciones.servel.cl"
-eleccion_url <- "eleccionesgore.servel.cl"
+eleccion_url <- "elecciones.servel.cl"
+# eleccion_url <- "eleccionesgore.servel.cl"
 
 
 # eliminar anteriores
@@ -18,7 +20,7 @@ file_delete(dir_ls("salidas"))
 
 
 # obtener datos ----
-# source("servel_scraping.R")
+source("servel_scraping.R")
 source("servel_limpiar.R")
 
 
