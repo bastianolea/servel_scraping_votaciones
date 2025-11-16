@@ -37,7 +37,10 @@ tabla_2 <- tabla_1 |>
 
 # mesas ----
 tabla_3 <- tabla_2 |> 
+  filter(str_detect(comuna, "PUENTE ALTO")) |>
+  # select(mesas_texto) |> print()
   # select(mesas_texto) |> 
+  mutate(mesas_texto = str_remove_all(mesas_texto, "\\.")) |> 
   mutate(mesas_texto_extraer = str_extract_all(mesas_texto, "\\d+\\,\\d+|\\d+")) |> 
   rowwise() |> 
   mutate(mesas_escrutadas = mesas_texto_extraer[[1]],
@@ -145,7 +148,10 @@ tabla_10 <- tabla_8 |>
   mutate(candidatos = str_replace_all(candidatos,
                                      c("Jose" = "José",
                                        "Artes" = "Artés",
-                                       "Roman" = "Román"))
+                                       "Roman" = "Román",
+                                       "Fernandez" = "Fernández",
+                                       "Enriquez" = "Enríquez")
+                                     )
   ) |> 
   # ordenar
   mutate(candidatos = forcats::fct_reorder(candidatos, orden)) |> 

@@ -9,3 +9,5 @@ color <- list("centro" = "#B16AD2", #"#9C579C", #"#B072CC",
               "derecha" = "#1D76DB",
               "independiente" = "#38B51D", #"#3ABB1E", #"#808080",
               "otros" = color_detalle2)
+
+color_barras = "#1D76DB"

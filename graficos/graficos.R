@@ -25,6 +25,7 @@ source("datos/colores.R")
 
 # comuna_elegida = "ANTOFAGASTA"
 # comuna_elegida = "AYSEN"
+comuna_elegida = "PUENTE ALTO"
 
 # comuna al azar
 # comuna_elegida = sample(unique(datos_todos$comuna), 1)
@@ -38,13 +39,14 @@ datos_grafico <- datos_todos |>
   filter(comuna == comuna_elegida) |>
   # arreglar etiquetas
   mutate(porcentaje_t = percent(porcentaje, accuracy = 0.1, trim = TRUE)) |> 
-  mutate(#partido = replace_na(partido, ""),
+  mutate(# partido = replace_na(partido, ""),
          # candidato = ifelse(partido == "", candidato, 
          #                    glue("{candidato} ({partido})")),
-         candidato = candidato |> str_wrap(30),
-         # candidato = fct_reorder(candidato, porcentaje),
-         candidato = fct_reorder(candidato, orden, .desc = TRUE)
-         # candidato = fct_relevel(candidato, "Nulo/Blanco",after = 0)
+    sector = ifelse(candidato == "Nulo/Blanco", "Nulos", "Candidatos"),
+         # candidato = candidato |> str_wrap(30),
+         candidato = fct_reorder(candidato, porcentaje),
+         # candidato = fct_reorder(candidato, orden, .desc = TRUE)
+         candidato = fct_relevel(candidato, "Nulo/Blanco",after = 0)
          ) |> 
   arrange(desc(candidato))
 
@@ -87,12 +89,16 @@ grafico_1 <- datos_grafico |>
 ## escalas ---- 
 grafico_2 <- grafico_1 +
   scale_x_continuous(labels = scales::percent, expand = expansion(c(0, opt_expand_x))) +
-  scale_fill_manual(values = c("Centro" = color$centro,
-                               "Izquierda" = color$izquierda,
-                               "Derecha" = color$derecha,
-                               "Independiente" = color$independiente,
-                               "Otros" = color$otros), aesthetics = c("color", "fill")) +
-  guides(fill = guide_legend(position = "inside", ncol = 1))
+  # scale_fill_manual(values = c("Centro" = color$centro,
+  #                              "Izquierda" = color$izquierda,
+  #                              "Derecha" = color$derecha,
+  #                              "Independiente" = color$independiente,
+  #                              "Otros" = color$otros), aesthetics = c("color", "fill")) +
+  scale_fill_manual(values = c("Ninguno" = color_detalle2,
+                               "Candidatos" = color_barras), 
+                    aesthetics = c("color", "fill")) +
+  # guides(fill = guide_legend(position = "inside", ncol = 1))
+  guides(fill = guide_none())
 
 ## temas ----
 grafico_3 <- grafico_2 +

@@ -30,8 +30,10 @@ datos_tabla <- datos_todos |>
   # arreglar etiquetas
   mutate(porcentaje_t = scales::percent(porcentaje, accuracy = 0.1, trim = TRUE)) |> 
   mutate(partido = replace_na(partido, ""),
-         # candidato = fct_reorder(candidato, porcentaje),
-         candidato = fct_reorder(candidato, orden, .desc = TRUE))
+         candidato = fct_reorder(candidato, porcentaje),
+         candidato = fct_relevel(candidato, "Nulo/Blanco",after = 0)
+         # candidato = fct_reorder(candidato, orden, .desc = TRUE)
+         )
 
 n_mesas = datos_tabla$mesas_escrutadas[1]
 total_mesas = datos_tabla$mesas_totales[1]
@@ -49,6 +51,15 @@ tabla <- datos_tabla |>
               sep_mark = ".", dec_mark = ",") |> 
   fmt_number(votos, 
              decimals = 0, sep_mark = ".", dec_mark = ",") |> 
+  # color de votos
+  data_color(columns = porcentaje, #rows = candidato != "Nulo/Blanco", 
+             # method = "factor", 
+             method = "numeric",
+             domain = c(0, max(datos_tabla$porcentaje, na.rm = T)), 
+             palette = c("white", color_barras),
+             # levels = levels(datos_tabla$sector), # la paleta va en el orden que tiene el vector
+             # palette = c(color$derecha, color$centro, color$izquierda, color$independiente, color_detalle3),
+             apply_to = "fill") |> 
   # # color texto partidos
   # data_color(columns = sector, #rows = candidato != "Nulo/Blanco", 
   #            target_columns = partido,
@@ -84,7 +95,7 @@ tabla <- datos_tabla |>
               heading.border.bottom.style = "solid", heading.border.bottom.width = 16, heading.border.bottom.color = "white") |> 
   tab_style(locations = cells_body(column = candidato), style = cell_text(weight = "bold")) |> 
   # estilo fondos
-  tab_style(locations = cells_body(column = c(candidato, votos, porcentaje)), style = cell_fill(color = color_fondo)) |> 
+  tab_style(locations = cells_body(column = c(candidato, votos)), style = cell_fill(color = color_fondo)) |> 
   # estilo fila nulos
   tab_style(locations = cells_body(rows = candidato == "Nulo/Blanco"), 
             style = cell_text(color = color_detalle2)) |> 
