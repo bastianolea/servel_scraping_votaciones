@@ -167,7 +167,7 @@ beepr::beep()
 
 # guardar ----
 write_rds(tabla, 
-          paste0("datos/scraping/gobernadores/resultados_", now(), ".rds"))
+          paste0("datos/scraping/presidenciales/resultados_", now(), ".rds"))
 
 
 # cerrar server ----

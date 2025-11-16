@@ -10,7 +10,8 @@ library(forcats)
 
 # cargar ----
 # eleccion <- "alcaldes"
-eleccion <- "gobernadores"
+# eleccion <- "gobernadores"
+eleccion <- "presidenciales"
 
 # cargar último resultado de servel_scraping.R
 archivos <- dir_info(paste0("datos/scraping/", eleccion)) |> 
@@ -42,25 +43,25 @@ tabla_3 <- tabla_2 |>
   mutate(mesas_escrutadas = mesas_texto_extraer[[1]],
          mesas_totales = mesas_texto_extraer[[2]]) |> 
   ungroup() |> 
+  mutate(across(c(mesas_escrutadas, mesas_totales), ~str_remove_all(.x, "\\."))) |> 
   mutate(across(c(mesas_escrutadas, mesas_totales), as.numeric)) |> 
   select(-mesas_texto_extraer)
 
 
 # marcar filas que no son candidatos ----
-tabla_5 <- tabla_3 |> 
-  # filter(comuna == "SAN JOAQUIN") |>
-  # select(mesas_texto)
-  mutate(tipo_totales = ifelse(lista_pacto %in% c("Válidamente Emitidos", "Votos Nulos", "Votos Blancos", "Votos en Blanco", "Total Votación"), TRUE, FALSE)) |> 
-  mutate(tipo_pacto = ifelse(lista_pacto |> str_detect("^\\w+ - \\w+|CANDIDATURAS INDEPENDIENTES|^\\w+-\\w+"), TRUE, FALSE)) |> 
+tabla_5 <- tabla_3 |>
+  # sólo si es por listas
+  # mutate(tipo_totales = ifelse(lista_pacto %in% c("Válidamente Emitidos", "Votos Nulos", "Votos Blancos", "Votos en Blanco", "Total Votación"), TRUE, FALSE)) |>
+  # mutate(tipo_pacto = ifelse(lista_pacto |> str_detect("^\\w+ - \\w+|CANDIDATURAS INDEPENDIENTES|^\\w+-\\w+"), TRUE, FALSE)) |>
   # corregir cifras
   mutate(votos = votos |> str_remove("\\.") |> as.numeric(),
          # mesas_escrutadas = mesas_escrutadas |> str_remove_all("\\.") |> as.numeric(),
          mesas_escrutadas = str_extract(mesas_texto, "\\d+\\.\\d+|\\d+") |> str_remove_all("\\.") |> as.numeric(),
-         mesas_totales = mesas_texto |> str_extract("un total de (\\d+|\\d+\\.\\d+) mesas") |> str_remove("\\.") |> 
+         mesas_totales = mesas_texto |> str_extract("un total de (\\d+|\\d+\\.\\d+) mesas") |> str_remove("\\.") |>
            str_extract("\\d+") |> as.numeric() #mesas_totales |> str_remove_all("\\.") |> as.numeric(),
          # porcentaje = porcentaje |> str_remove("%$") |> as.numeric(),
          # porcentaje = porcentaje / 100
-         ) |> 
+         ) |>
   # recalcular total de votos
   mutate(total_votos = sum(votos), .by = comuna)
 
