@@ -5,7 +5,7 @@ datos_comuna <- datos_todos |>
 comuna_t <- corregir_comunas(comuna_elegida)
 
 
-intro <- glue("Elecciones presidenciales 2025: {toupper(comuna_t)}, con un {p_mesas} de las mesas escrutadas.")
+intro <- glue("Elecciones presidenciales 2025: comuna de {toupper(comuna_t)}, con un {p_mesas} de las mesas escrutadas.")
 
 mayor <- datos_comuna |> slice_max(votos, with_ties = F)
 segundo <- datos_comuna |> 
@@ -32,4 +32,5 @@ cat(intro,
 writeLines(c(intro, 
              interpretación, 
              outro), 
-           con = glue("textos/resultados/{eleccion}/texto_{comuna_t}.txt"))
+           # con = glue("textos/resultados/{eleccion}/texto_{comuna_t}.txt"))
+           con = glue("textos/resultados/{eleccion}/{comuna_t}_texto.txt"))

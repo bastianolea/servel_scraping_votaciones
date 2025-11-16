@@ -37,9 +37,7 @@ tabla_2 <- tabla_1 |>
 
 # mesas ----
 tabla_3 <- tabla_2 |> 
-  filter(str_detect(comuna, "PUENTE ALTO")) |>
-  # select(mesas_texto) |> print()
-  # select(mesas_texto) |> 
+  # filter(str_detect(comuna, "PUENTE ALTO")) |>
   mutate(mesas_texto = str_remove_all(mesas_texto, "\\.")) |> 
   mutate(mesas_texto_extraer = str_extract_all(mesas_texto, "\\d+\\,\\d+|\\d+")) |> 
   rowwise() |> 

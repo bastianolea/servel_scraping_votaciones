@@ -114,6 +114,7 @@ tabla
 
 # guardar ----
 gtsave(tabla, 
-       filename = glue("tablas/resultados/{eleccion}/servel_tabla_{comuna_t}_{formatear_fecha(fecha_scraping)}.png"),
+       # filename = glue("tablas/resultados/{eleccion}/servel_tabla_{comuna_t}_{formatear_fecha(fecha_scraping)}.png"),
+       filename = glue("tablas/resultados/{eleccion}/{comuna_t}_tabla_{formatear_fecha(fecha_scraping)}.png"),
        quiet = TRUE) |> 
   suppressWarnings()

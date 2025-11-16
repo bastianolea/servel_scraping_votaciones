@@ -12,6 +12,7 @@ corregir_comunas <- function(comuna_elegida) {
                "san joaquin" ~ "San Joaquín",
                "penalolen" ~ "Peñalolén",
                "maipu" ~ "Maipú",
+               "estacion central" ~ "Estación Central",
                "aysen" ~ "Aysén",
                .default = comuna_elegida) |> 
     str_to_title()

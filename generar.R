@@ -39,19 +39,23 @@ comunas_elegidas = comunas_rm
 # comunas_elegidas = c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "SAN MIGUEL",
 #                      "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "ESTACION CENTRAL")
 # 
-# comunas_elegidas <- comunas_interes
+# # comunas_elegidas <- comunas_interes
 # comunas_elegidas <- c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "MAIPU",
 #                       "SAN MIGUEL", "PROVIDENCIA", "LAS CONDES", "LA PINTANA",
 #                       "RECOLETA", "MACUL","LA CISTERNA",
-#                       "ESTACION CENTRAL", "PEÑALOLEN", "RENCA")
+#                       "ESTACION CENTRAL", "PEÑALOLEN", "INDEPENDENCIA")
 
 # comunas_elegidas <- c("SANTIAGO", "PUENTE ALTO", "LAS CONDES", "PEÑALOLEN")
 # comunas_elegidas <- c("SANTIAGO", "ESTACION CENTRAL", "INDEPENDENCIA", "RECOLETA")
+
+comunas_elegidas <- c("VITACURA", "LO BARNECHEA", "LAS CONDES", "LA REINA")
+comunas_elegidas <- c("PUENTE ALTO", "PIRQUE", "LA FLORIDA", "SAN JOSE DE MAIPO")
 
 # generar salidas ----
 walk(comunas_elegidas, \(comuna_elegida) {
   message("generando salidas para comuna ", comuna_elegida)
   # comuna_elegida = "LA FLORIDA"
+  # comuna_elegida = "PUENTE ALTO"
   # generar gráficos
   source("graficos/graficos.R", local = TRUE)
   
@@ -59,10 +63,6 @@ walk(comunas_elegidas, \(comuna_elegida) {
   source("tablas/tablas.R", local = TRUE)
   
   source("textos/textos.R", local = TRUE)
-  # generar mapa
-  # source("mapas/mapa_gobernadores_rm.R", local = TRUE)
-  
-  # source("mapas/mapa_gobernadores_rm_p.R", local = TRUE)
   
   # copiar a carpeta de outputs
   file_copy(c(ultimo_archivo(glue("graficos/resultados/{eleccion}")),

@@ -25,7 +25,7 @@ source("datos/colores.R")
 
 # comuna_elegida = "ANTOFAGASTA"
 # comuna_elegida = "AYSEN"
-comuna_elegida = "PUENTE ALTO"
+# comuna_elegida = "PUENTE ALTO"
 
 # comuna al azar
 # comuna_elegida = sample(unique(datos_todos$comuna), 1)
@@ -68,7 +68,7 @@ p_mesas = datos_grafico$mesas_porcentaje[1] |> percent(accuracy = 0.01, trim = T
 opt_nudge = 0.006
 opts_corte = 0.045 * n_candidatos
 opts_size_texto = 4
-opt_ancho_col = .4
+opt_ancho_col = .5
 opt_expand_x = 0.2
 
 
@@ -146,6 +146,7 @@ grafico_4
   
 
 # guardar ----
-ggsave(filename = glue("graficos/resultados/{eleccion}/servel_grafico_{comuna_t}_{formatear_fecha(fecha_scraping)}.jpg"),
+# ggsave(filename = glue("graficos/resultados/{eleccion}/servel_grafico_{comuna_t}_{formatear_fecha(fecha_scraping)}.jpg"),
+ggsave(filename = glue("graficos/resultados/{eleccion}/{comuna_t}_grafico_{formatear_fecha(fecha_scraping)}.jpg"),
        width = 5, height = (1.4 + (n_candidatos * 0.2)), scale = 1.5
 )
