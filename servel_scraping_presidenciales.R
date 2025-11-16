@@ -25,7 +25,15 @@ Sys.sleep(esperas*1.5)
 
 # navegar ----
 
-## apretar botón división geográfica
+# apretar botón presidente
+remote_driver$
+  findElement("xpath",
+              '//*[@id="4"]')$
+  clickElement()
+
+Sys.sleep(tiempo_aleatorio(esperas))
+
+# apretar botón división geográfica
 remote_driver$
   findElement("css selector", 
               "#filtros_boton > div:nth-child(3)")$
@@ -42,13 +50,7 @@ remote_driver$
 
 Sys.sleep(tiempo_aleatorio(esperas))
 
-# apretar botón presidente
-remote_driver$
-  findElement("xpath",
-              '//*[@id="4"]')$
-  clickElement()
 
-Sys.sleep(tiempo_aleatorio(esperas))
 
 
 # obtener comunas ----
@@ -59,8 +61,8 @@ comunas <- sitio_comunas[[1]] |>
   read_html() |> 
   html_elements(".p-6 > div:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > select:nth-child(2)") |> 
   html_elements("option") |>
-  html_attr("data-id")
-  # html_text()
+  # html_attr("data-id")
+  html_text()
 
 comunas
 
@@ -77,24 +79,30 @@ Sys.sleep(esperas)
 # lista_comunas <- c(3:10)
 
 # # todas las comunas
-# lista_comunas <- c(2:length(comunas)) # el 1 es "seleccionar opción"
-# lista_comunas <- c(2:length(comunas)) # el 1 es "seleccionar opción"
+lista_comunas <- c(2:length(comunas)) # el 1 es "seleccionar opción"
 
 
 # loop ----
 message("obteniendo ", length(lista_comunas), " comunas")
 
 
-tabla <- map(lista_comunas, \(comuna_id) {
-  # comuna_id <- 2760
-  message("obteniendo comuna: ", comuna_id)
+tabla <- map(lista_comunas, \(comuna_n) {
+  # comuna_n <- 2
+
+  # message("obteniendo comuna: ", comunas[comuna_n])
   
   tryCatch({
     
+    # seleccionar región metropolitana para reiniciar selector de provincia
+    remote_driver$
+      findElement("css selector",
+                  ".p-6 > div:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > select:nth-child(2) > option:nth-child(8)")$
+      clickElement()
+    
     # seleccionar opción del dropdown
     remote_driver$
-      findElement("xpath",
-                  paste0('//*[@id="', comuna_id, '"]'))$
+      findElement("css selector",
+                  paste0("div.mb-10:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > select:nth-child(2) > option:nth-child(", comuna_n, ")"))$
       clickElement()
     
     # esperar
@@ -135,6 +143,7 @@ tabla <- map(lista_comunas, \(comuna_id) {
              comuna = nombre_comuna,
              mesas_texto = texto_mesas)
     
+    message(nombre_comuna)
     return(tabla_2) 
     
   }, error = function(e) {
@@ -144,8 +153,15 @@ tabla <- map(lista_comunas, \(comuna_id) {
   )
 })
 
+
+
 # resultado ----
 tabla
+
+tabla |> 
+  bind_rows() |> 
+  distinct(comuna)
+
 beepr::beep()
 
 
