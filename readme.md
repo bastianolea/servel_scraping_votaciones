@@ -9,6 +9,7 @@ Flujo de R que scrapea datos desde el Servel, limpia los datos, y retorna visual
 Scripts:
 1. `servel_scraping_presidenciales.R`
 2. `servel_limpiar_presidenciales.R`
+Usar por medio de script `generar.R` definiendo las comunas en el vector `comunas_elegidas`, y los resultados saldrán en la carpeta `salidas`.
 
 ----
 
