@@ -4,6 +4,14 @@ Flujo de R que scrapea datos desde el Servel, limpia los datos, y retorna visual
 
 ----
 
+## Elecciones presidenciales y de diputados/as 2025
+
+Scripts:
+1. `servel_scraping_presidenciales.R`
+2. `servel_limpiar_presidenciales.R`
+
+----
+
 ## Elecciones Regionales 2024: Gobernadores regionales
 
 ![Mapa de resultados comunales de elección de gobernadores 2024](selección/servel_mapa_rm_p_resultados_2024-11-25.jpg)
