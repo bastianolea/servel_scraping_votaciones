@@ -40,16 +40,19 @@ comunas_elegidas = comunas_rm
 #                      "PROVIDENCIA", "LAS CONDES", "LA PINTANA", "ESTACION CENTRAL")
 # 
 # # comunas_elegidas <- comunas_interes
-# comunas_elegidas <- c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "MAIPU",
-#                       "SAN MIGUEL", "PROVIDENCIA", "LAS CONDES", "LA PINTANA",
-#                       "RECOLETA", "MACUL","LA CISTERNA",
-#                       "ESTACION CENTRAL", "PEÑALOLEN", "INDEPENDENCIA")
+comunas_elegidas <- c("LA FLORIDA", "PUENTE ALTO", "SANTIAGO", "ÑUÑOA", "MAIPU",
+                      "SAN MIGUEL", "PROVIDENCIA", "LAS CONDES", "LA PINTANA",
+                      "RECOLETA", "MACUL","LA CISTERNA", "SAN BERNARDO",
+                      "ESTACION CENTRAL", "PEÑALOLEN", "INDEPENDENCIA")
 
 # comunas_elegidas <- c("SANTIAGO", "PUENTE ALTO", "LAS CONDES", "PEÑALOLEN")
+
 # comunas_elegidas <- c("SANTIAGO", "ESTACION CENTRAL", "INDEPENDENCIA", "RECOLETA")
 
-comunas_elegidas <- c("VITACURA", "LO BARNECHEA", "LAS CONDES", "LA REINA")
-comunas_elegidas <- c("PUENTE ALTO", "PIRQUE", "LA FLORIDA", "SAN JOSE DE MAIPO")
+# comunas_elegidas <- c("VITACURA", "LO BARNECHEA", "LAS CONDES", "LA REINA")
+# comunas_elegidas <- c("PUENTE ALTO", "PIRQUE", "LA FLORIDA", "SAN JOSE DE MAIPO")
+
+# comunas_elegidas <- c("SAN BERNARDO", "MAIPU", "SANTIAGO", "LA FLORIDA")
 
 # generar salidas ----
 walk(comunas_elegidas, \(comuna_elegida) {
