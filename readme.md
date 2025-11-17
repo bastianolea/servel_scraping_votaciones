@@ -8,20 +8,20 @@ Flujo de R que scrapea datos desde el Servel, limpia los datos, y retorna visual
 
 Mapa de resultados presidenciales en la Región Metropolitana, por comuna, para Jeanette Jara (26,85%), José Antonio Kast (23,93%) y Franco Parisi (19,69%):
 
-![]("selección/servel_mapa_rm_p_resultados_2025-11-16.jpg")
+![]("selección/servel_mapa_rm_p_resultados_2025_11_16.jpg")
 
 Resultados presidenciales en la Región Metropolitana, comparando ventaja porcentual por comuna entre las dos primeras mayorías:
 
-![]("selección/servel_mapa_rm_dif_resultados_2025-11-16.jpg")
+![]("selección/servel_mapa_rm_dif_resultados_2025_11_16.jpg")
 
 Scripts:
 1. `servel_scraping_presidenciales.R`
 2. `servel_limpiar_presidenciales.R`
 Usar por medio de script `generar.R` definiendo las comunas en el vector `comunas_elegidas`, y los resultados saldrán en la carpeta `salidas`.
 
-![]("selección/Maipú_tabla_16-11-25_2025.png")
+![]("selección/maipu_tabla_16_11_25_2025.png")
 
-![]("selección/Puente Alto_grafico_16-11-25_2025.jpg")
+![]("selección/puente_alto_grafico_16_11_25_2025.jpg")
 
 
 ----
