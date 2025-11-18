@@ -168,5 +168,7 @@ datos_todos |>
 datos_todos |> arrange(desc(votos))
 
 
-readr::write_csv2(datos_todos, "datos/resultados_presidenciales_2025.csv")
+readr::write_csv2(datos_todos, 
+                  "datos/resultados_presidenciales_2025.csv")
+
 message("Datos limpios guardados")
